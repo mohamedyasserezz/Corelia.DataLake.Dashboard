@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="_Common\Consts\" />
+    <Folder Include="_Common\Errors\" />
+    <Folder Include="_Common\Helpers\" />
+    <Folder Include="_Common\Settings\" />
+  </ItemGroup>
+
+</Project>

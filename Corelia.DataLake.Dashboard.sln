@@ -3,9 +3,75 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36221.1 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{77E31DAA-873B-41B2-B593-26A55DFCAD31}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{EB565CBE-4AB2-490C-878D-26F73829D72E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{D2CCF69B-8B88-483F-9D4C-06C29B19B4FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{13C70462-94A6-46E1-A39A-82C139C3A86B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{A39C8E1B-8D57-4DDD-A156-A5F37B8506DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corelia.DataLake.Dashboard.Domain", "Corelia.DataLake.Dashboard.Domain\Corelia.DataLake.Dashboard.Domain.csproj", "{6A77C7DE-0818-40F6-90ED-E147208F00BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corelia.DataLake.Dashboard.Application", "Corelia.DataLake.Dashboard.Application\Corelia.DataLake.Dashboard.Application.csproj", "{D16BCD9A-EC47-49CA-BB4C-7CAF087D67DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corelia.DataLake.Dashboard.Persistance", "Corelia.DataLake.Dashboard.Persistance\Corelia.DataLake.Dashboard.Persistance.csproj", "{B206385C-F78D-47B9-BB84-7649E70D3DE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corelia.DataLake.Dashboard.Apis", "Corelia.DataLake.Dashboard.Apis\Corelia.DataLake.Dashboard.Apis.csproj", "{393188D9-8423-48CB-9188-F53328EC61C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corelia.DataLake.Dashboard.Shared", "Corelia.DataLake.Dashboard.Shared\Corelia.DataLake.Dashboard.Shared.csproj", "{C49D8BCF-5FD2-48A2-80CA-CE761F178972}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Corelia.DataLake.Dashboard.Application.Test", "Corelia.DataLake.Dashboard.Application.Test\Corelia.DataLake.Dashboard.Application.Test.csproj", "{6F621181-C288-4DC8-88B6-FFAA4827C7D6}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A77C7DE-0818-40F6-90ED-E147208F00BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A77C7DE-0818-40F6-90ED-E147208F00BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A77C7DE-0818-40F6-90ED-E147208F00BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A77C7DE-0818-40F6-90ED-E147208F00BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D16BCD9A-EC47-49CA-BB4C-7CAF087D67DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D16BCD9A-EC47-49CA-BB4C-7CAF087D67DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D16BCD9A-EC47-49CA-BB4C-7CAF087D67DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D16BCD9A-EC47-49CA-BB4C-7CAF087D67DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B206385C-F78D-47B9-BB84-7649E70D3DE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B206385C-F78D-47B9-BB84-7649E70D3DE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B206385C-F78D-47B9-BB84-7649E70D3DE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B206385C-F78D-47B9-BB84-7649E70D3DE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{393188D9-8423-48CB-9188-F53328EC61C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{393188D9-8423-48CB-9188-F53328EC61C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{393188D9-8423-48CB-9188-F53328EC61C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{393188D9-8423-48CB-9188-F53328EC61C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49D8BCF-5FD2-48A2-80CA-CE761F178972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49D8BCF-5FD2-48A2-80CA-CE761F178972}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49D8BCF-5FD2-48A2-80CA-CE761F178972}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49D8BCF-5FD2-48A2-80CA-CE761F178972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F621181-C288-4DC8-88B6-FFAA4827C7D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F621181-C288-4DC8-88B6-FFAA4827C7D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F621181-C288-4DC8-88B6-FFAA4827C7D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F621181-C288-4DC8-88B6-FFAA4827C7D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EB565CBE-4AB2-490C-878D-26F73829D72E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D2CCF69B-8B88-483F-9D4C-06C29B19B4FE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{13C70462-94A6-46E1-A39A-82C139C3A86B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A39C8E1B-8D57-4DDD-A156-A5F37B8506DB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6A77C7DE-0818-40F6-90ED-E147208F00BA} = {EB565CBE-4AB2-490C-878D-26F73829D72E}
+		{D16BCD9A-EC47-49CA-BB4C-7CAF087D67DD} = {EB565CBE-4AB2-490C-878D-26F73829D72E}
+		{B206385C-F78D-47B9-BB84-7649E70D3DE6} = {D2CCF69B-8B88-483F-9D4C-06C29B19B4FE}
+		{393188D9-8423-48CB-9188-F53328EC61C4} = {13C70462-94A6-46E1-A39A-82C139C3A86B}
+		{C49D8BCF-5FD2-48A2-80CA-CE761F178972} = {A39C8E1B-8D57-4DDD-A156-A5F37B8506DB}
+		{6F621181-C288-4DC8-88B6-FFAA4827C7D6} = {77E31DAA-873B-41B2-B593-26A55DFCAD31}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A984E88-377D-49F6-99FF-20BBFB25B432}

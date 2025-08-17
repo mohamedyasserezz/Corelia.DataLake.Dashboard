@@ -1,0 +1,6 @@
+@Corelia.DataLake.Dashboard.Apis_HostAddress = http://localhost:5010
+
+GET {{Corelia.DataLake.Dashboard.Apis_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

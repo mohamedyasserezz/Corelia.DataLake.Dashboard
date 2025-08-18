@@ -1,5 +1,6 @@
 ﻿using Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication;
 using Corelia.DataLake.Dashboard.Shared.Abstraction;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Login;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.RefreshToken;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,12 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers
 
             return response.IsSuccess ? Ok() : response.ToProblem();
 
+        }
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto changePasswordDto, CancellationToken cancellationToken)
+        {
+            var response = await _authService.ChangePasswordAsync(User, changePasswordDto, cancellationToken);
+            return response.IsSuccess ? Ok(response.Value) : response.ToProblem();
         }
     }
 }

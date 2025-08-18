@@ -5,10 +5,12 @@ using Corelia.DataLake.Dashboard.Domain.Entities.Authentication;
 using Corelia.DataLake.Dashboard.Shared._Common.Errors;
 using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
@@ -159,7 +161,32 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
             return Result.Success();
         }
 
-        
+        public async Task<Result<ChangePasswordToReturn>> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, ChangePasswordDto changePasswordDto, CancellationToken cancellationToken)
+        {
+            var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null)
+                return Result.Failure<ChangePasswordToReturn>(UserErrors.InvalidJwtToken);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return Result.Failure<ChangePasswordToReturn>(UserErrors.UserNotFound);
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var (token, expiresIn) = _jwtProvider.GenerateToken(user, userRoles);
+
+            if (result.Succeeded)
+            {
+                // Optionally, you can send a confirmation email or log the password change
+                _logger.LogInformation("User {UserId} changed their password successfully.", userId);
+                return Result.Success(new ChangePasswordToReturn(
+                              "Password changed successfully.",
+                                  token
+                                      ));
+            }
+            return Result.Failure<ChangePasswordToReturn>(UserErrors.OperationFaild);
+        }
+
+
 
         #region Helpers
         private static string GenerateRefreshToken()
@@ -174,7 +201,9 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
             return new string(Enumerable.Repeat(0, length)
                 .Select(_ => random.Next(0, 10).ToString()[0])
                 .ToArray());
-        } 
+        }
+
+
         #endregion
     }
 }

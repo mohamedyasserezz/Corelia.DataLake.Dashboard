@@ -50,5 +50,9 @@ namespace Corelia.DataLake.Dashboard.Shared._Common.Errors
         public static readonly Error PatientsOnly =
             new("User.PatientsOnly", "Only Patiets can see recordes and some doctors", StatusCodes.Status401Unauthorized);
 
+        public static readonly Error OperationFaild =
+            new("User.OperationFaild", "Operation failed, please try again later", StatusCodes.Status500InternalServerError);
+
+
     }
 }

@@ -9,9 +9,16 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="FakeItEasy" Version="8.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Apis\Corelia.DataLake.Dashboard.Apis.csproj" />
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Application\Corelia.DataLake.Dashboard.Application.csproj" />
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Domain\Corelia.DataLake.Dashboard.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

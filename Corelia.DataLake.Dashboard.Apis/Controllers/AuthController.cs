@@ -34,5 +34,14 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers
             return response.IsSuccess ? Ok(response.Value) : response.ToProblem();
 
         }
+
+        [HttpPost("Revoke-refresh-Token")]
+        public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody] RefreshTokenRequest refreshTokenRequest, CancellationToken cancellationToken)
+        {
+            var response = await _authService.RevokeRefreshTokenAsync(refreshTokenRequest.Token, refreshTokenRequest.RefreshToken, cancellationToken);
+
+            return response.IsSuccess ? Ok() : response.ToProblem();
+
+        }
     }
 }

@@ -1,12 +1,13 @@
+using Corelia.DataLake.Dashboard.Apis;
+using Corelia.DataLake.Dashboard.Apis.Extentions;
+using Corelia.DataLake.Dashboard.Application;
 using Corelia.DataLake.Dashboard.Persistance;
+using Corelia.DataLake.Dashboard.Shared;
 using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using HangfireBasicAuthenticationFilter;
-using Corelia.DataLake.Dashboard.Application;
 using Serilog;
-using Corelia.DataLake.Dashboard.Apis;
-using Corelia.DataLake.Dashboard.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
 });
 builder.Services.AddControllers();
 var app = builder.Build();
+await app.InitializerEventManagmentContextAsync();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

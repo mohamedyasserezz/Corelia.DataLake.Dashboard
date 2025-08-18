@@ -1,5 +1,7 @@
 ﻿using Corelia.DataLake.Dashboard.Domain.Contract.Infrastructure;
+using Corelia.DataLake.Dashboard.Domain.Contract.Infrastructure.DbInitializers;
 using Corelia.DataLake.Dashboard.Persistance.Data;
+using Corelia.DataLake.Dashboard.Persistance.DbInitilizers;
 using Corelia.DataLake.Dashboard.Persistance.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +21,7 @@ namespace Corelia.DataLake.Dashboard.Persistance
 
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
+            services.AddScoped(typeof(ICoreliaDataLakeDbInitializer), typeof(CoreliaDataLakeDbInitializer));
 
 
             return services;

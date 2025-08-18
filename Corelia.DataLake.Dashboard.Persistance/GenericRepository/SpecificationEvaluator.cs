@@ -1,4 +1,5 @@
 ﻿using Corelia.DataLake.Dashboard.Domain.Contract;
+using Microsoft.EntityFrameworkCore;
 
 namespace Corelia.DataLake.Dashboard.Persistance.GenericRepository
 {

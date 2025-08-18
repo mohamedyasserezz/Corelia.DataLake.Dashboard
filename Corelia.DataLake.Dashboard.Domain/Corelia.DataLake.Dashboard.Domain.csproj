@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contract\Infrastructure\" />
-    <Folder Include="Contract\Service\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Specfication\" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Shared\Corelia.DataLake.Dashboard.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -24,4 +24,11 @@
     <Folder Include="Templates\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Application\Corelia.DataLake.Dashboard.Application.csproj" />
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Domain\Corelia.DataLake.Dashboard.Domain.csproj" />
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Persistance\Corelia.DataLake.Dashboard.Persistance.csproj" />
+    <ProjectReference Include="..\Corelia.DataLake.Dashboard.Shared\Corelia.DataLake.Dashboard.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

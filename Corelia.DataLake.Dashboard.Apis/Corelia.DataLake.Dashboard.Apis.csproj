@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Extentions\" />
+    <Folder Include="wwwroot\" />
     <Folder Include="Templates\" />
   </ItemGroup>
 

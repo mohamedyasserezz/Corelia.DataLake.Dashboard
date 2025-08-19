@@ -1,5 +1,7 @@
 ﻿using System;
 using FluentValidation;
+namespace Corelia.DataLake.Dashboard.Shared.Models.Authentication.ConfirmEmail
+{ 
 public class ConfirmEmailRequestValidator : AbstractValidator<ConfirmEmailRequest>
 {
     public ConfirmEmailRequestValidator()
@@ -12,4 +14,5 @@ public class ConfirmEmailRequestValidator : AbstractValidator<ConfirmEmailReques
            .NotEmpty()
            .WithMessage("Plz Add a {PropertyName}");
     }
+}
 }

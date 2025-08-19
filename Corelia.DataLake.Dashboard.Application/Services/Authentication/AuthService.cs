@@ -7,9 +7,11 @@ using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ConfirmEmail;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Register;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -39,6 +41,55 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
         private static readonly Dictionary<string, (string Otp, DateTime Expiry)> _otpStore = new();
         private readonly int _otpExpiryMinutes = 15;
         private readonly int _refreshTokenExpiryDays = 14;
+
+        public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
+        {
+            if (!Enum.TryParse<UserType>(request.UserType, true, out var userType))
+                return Result.Failure<AuthResponse>(
+                    new Error("InvalidUserType", "The provided user type is not valid", 400)
+                );
+
+            string? imageName = null;
+            if (request.Image is not null)
+            {
+                imageName = await _fileService.SaveFileAsync(request.Image, "profiles");
+            }
+
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                UserName = request.Email,
+                FullName = request.FullName,
+                Image = imageName,
+                UserType = userType
+            };
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+
+            if (!result.Succeeded)
+                return Result.Failure<AuthResponse>(
+                    new Error("RegistrationFailed", "Failed to register user", 500)
+                );
+
+            var token = Guid.NewGuid().ToString();
+            var refreshToken = Guid.NewGuid().ToString();
+            var expiresIn = 3600;
+
+            var response = new AuthResponse(
+                user.Id,
+                user.Email,
+                user.FullName,
+                user.Image,
+                token,
+                expiresIn,
+                refreshToken,
+                user.UserType.ToString(),
+                DateTime.UtcNow.AddDays(7)
+            );
+
+            return Result.Success(response);
+        }
+
 
 
         public async Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default)
@@ -236,6 +287,8 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
 
             return Result.Failure<AuthResponse>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
         }
+       
+
 
         #region Helpers
         private static string GenerateRefreshToken()
@@ -252,7 +305,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
                 .ToArray());
         }
 
-
+       
         #endregion
     }
 }

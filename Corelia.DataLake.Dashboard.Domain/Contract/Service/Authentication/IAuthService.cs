@@ -1,13 +1,17 @@
-﻿using Corelia.DataLake.Dashboard.Shared.Abstraction;
+﻿
+using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ConfirmEmail;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Register;
 using System.Security.Claims;
 
 namespace Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication
 {
     public interface IAuthService
     {
-        // Task<Result> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);
+        Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);
+
 
         Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default);
         Task<Result<AuthResponse>> GetRefreshTokenAsync(string token, string refreshToken, CancellationToken cancellationToken = default);

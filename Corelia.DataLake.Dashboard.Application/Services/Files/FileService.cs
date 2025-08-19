@@ -1,5 +1,6 @@
 ﻿using Corelia.DataLake.Dashboard.Domain.Contract.Service.File;
 using Corelia.DataLake.Dashboard.Domain.Entities.Authentication;
+using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
@@ -16,8 +17,17 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Files
         {
             _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
-            _imagesPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+            //_imagesPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+          
+            var webRoot = _webHostEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+            _imagesPath = Path.Combine(webRoot, "images");
+
+            // Ensure the images folder exists
+            if (!Directory.Exists(_imagesPath))
+                Directory.CreateDirectory(_imagesPath);
         }
+
         public async Task<string> SaveFileAsync(IFormFile imageFile, string subfolder)
         {
             if (imageFile is null)
@@ -92,6 +102,31 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Files
                 return null!;
 
             return $"{request.Scheme}://{request.Host}/images/{subFolder}/{Image}";
+        }
+
+        public async Task<string> UploadAsync(IFormFile file, CancellationToken cancellationToken)
+        {
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("File is empty", nameof(file));
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+
+            
+            var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            var filePath = Path.Combine(uploadPath, fileName);
+
+            
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream, cancellationToken);
+            }
+
+            
+            return $"/uploads/{fileName}";
         }
     }
 }

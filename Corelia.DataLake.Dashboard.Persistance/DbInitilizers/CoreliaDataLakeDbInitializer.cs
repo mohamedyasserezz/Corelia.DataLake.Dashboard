@@ -18,9 +18,26 @@ namespace Corelia.DataLake.Dashboard.Persistance.DbInitilizers
             }
         }
 
-        public Task SeedAsync()
+        public async Task SeedAsync()
         {
-            throw new NotImplementedException();
+            // Example: create default admin user
+            if (!await dbContext.Users.AnyAsync())
+            {
+                var adminUser = new ApplicationUser
+                {
+                    FullName = "Admin",
+                    Email = "admin@example.com",
+                    UserName = "admin@example.com",
+                    UserType = UserType.Admin
+                };
+                var passwordHasher = new PasswordHasher<ApplicationUser>();
+                adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin123!");
+
+                dbContext.Users.Add(adminUser);
+                await dbContext.SaveChangesAsync();
+            }
+
+            // Add other seed data here...
         }
     }
 }

@@ -4,6 +4,7 @@ using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ConfirmEmail;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Login;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.RefreshToken;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Register;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Corelia.DataLake.Dashboard.Apis.Controllers
@@ -18,6 +19,19 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers
         private readonly IAuthService _authService = authService;
         private readonly ILogger<AuthController> _logger = logger;
 
+        [HttpPost("register")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Register([FromForm] RegisterRequest request, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Register user with email: {email}", request.Email);
+
+            var response = await _authService.RegisterAsync(request, cancellationToken);
+
+            return response.IsSuccess
+                ? Ok(response.Value)
+                : response.ToProblem();
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
         {
@@ -27,6 +41,7 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers
 
             return response.IsSuccess ? Ok(response.Value) : response.ToProblem();
         }
+
 
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshAsync([FromBody] RefreshTokenRequest refreshTokenRequest, CancellationToken cancellationToken)

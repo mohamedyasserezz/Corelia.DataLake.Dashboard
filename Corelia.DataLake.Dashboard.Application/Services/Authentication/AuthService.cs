@@ -6,6 +6,7 @@ using Corelia.DataLake.Dashboard.Shared._Common.Errors;
 using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
+using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ConfirmEmail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -186,7 +187,55 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
             return Result.Failure<ChangePasswordToReturn>(UserErrors.OperationFaild);
         }
 
+        public async Task<Result<AuthResponse>> ConfirmEmailAsync(ConfirmEmailRequest request)
+        {
+            if (await _userManager.FindByEmailAsync(request.Email) is not { } user)
+                return Result.Failure<AuthResponse>(UserErrors.InvalidOtp);
 
+            if (user.EmailConfirmed)
+                return Result.Failure<AuthResponse>(UserErrors.DuplicatedConfirmation);
+
+            var key = $"EMAIL_CONFIRM_{user.Id}";
+
+            // Check if OTP exists and is valid
+            if (!_otpStore.TryGetValue(key, out var otpInfo) ||
+                otpInfo.Otp != request.Otp ||
+                otpInfo.Expiry < DateTime.UtcNow)
+            {
+                return Result.Failure<AuthResponse>(UserErrors.InvalidOtp);
+            }
+
+            // Remove the OTP from store after usage
+            _otpStore.Remove(key);
+
+            // Generate a token for internal use with Identity
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var (tokenn, expiresIn) = _jwtProvider.GenerateToken(user, userRoles);
+                var refreshToken = GenerateRefreshToken();
+                var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+
+                var authResponse = new AuthResponse(user.Id,
+                    user.Email,
+                    user.FullName,
+                    _fileService.GetProfileUrl(user),
+                    tokenn,
+                    expiresIn,
+                    refreshToken,
+                    user.UserType.ToString(),
+                    refreshTokenExpiration);
+
+                return Result.Success(authResponse);
+            }
+
+            var error = result.Errors.First();
+
+            return Result.Failure<AuthResponse>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+        }
 
         #region Helpers
         private static string GenerateRefreshToken()

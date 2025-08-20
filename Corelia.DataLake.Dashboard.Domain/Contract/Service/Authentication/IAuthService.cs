@@ -19,7 +19,7 @@ namespace Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication
         Task<Result<AuthResponse>> ConfirmEmailAsync(ConfirmEmailRequest request);
         // Task<Result> ResendConfirmationEmailAsync(ResendConfirmationEmailRequest request);
         // Task<Result> SendResetPasswordOtpAsync(string email);
-        Task<Result<ChangePasswordToReturn>> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, ChangePasswordDto changePasswordDto, CancellationToken cancellationToken);
+        Task<Result<ChangePasswordToReturn>> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, ChangePasswordRequest changePasswordDto, CancellationToken cancellationToken);
         // Task<Result> AssignOtpForPassword(ResetPasswordRequest reset);
     }
 }

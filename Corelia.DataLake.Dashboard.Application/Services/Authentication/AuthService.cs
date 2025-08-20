@@ -8,16 +8,17 @@ using Corelia.DataLake.Dashboard.Shared.Models.Authentication;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.ConfirmEmail;
 using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Register;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
 {
+    [Authorize]
     public class AuthService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -31,7 +32,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager=roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IJwtProvider _jwtProvider = jwtProvider;
         private readonly IFileService _fileService = fileService;
@@ -44,7 +45,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
         private readonly int _otpExpiryMinutes = 15;
         private readonly int _refreshTokenExpiryDays = 14;
 
-     
+
         public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
         {
             if (!Enum.TryParse<UserType>(request.UserType, true, out var userType))
@@ -242,7 +243,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
             return Result.Success();
         }
 
-        public async Task<Result<ChangePasswordToReturn>> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, ChangePasswordDto changePasswordDto, CancellationToken cancellationToken)
+        public async Task<Result<ChangePasswordToReturn>> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, ChangePasswordRequest changePasswordDto, CancellationToken cancellationToken)
         {
             var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId is null)
@@ -316,7 +317,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
 
             return Result.Failure<AuthResponse>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
         }
-       
+
 
 
         #region Helpers
@@ -334,7 +335,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
                 .ToArray());
         }
 
-       
+
         #endregion
     }
 }

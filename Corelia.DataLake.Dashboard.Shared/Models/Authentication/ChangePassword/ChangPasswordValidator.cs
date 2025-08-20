@@ -2,7 +2,7 @@
 
 namespace Corelia.DataLake.Dashboard.Shared.Models.Authentication.ChangePassword
 {
-    public class ChangPasswordValidator : AbstractValidator<ChangePasswordDto>
+    public class ChangPasswordValidator : AbstractValidator<ChangePasswordRequest>
     {
         public ChangPasswordValidator()
         {

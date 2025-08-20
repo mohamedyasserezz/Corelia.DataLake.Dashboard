@@ -74,7 +74,7 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
         {
             // Arrange
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity());
-            var changePasswordDto = new ChangePasswordDto("oldPass", "newPass");
+            var changePasswordDto = new ChangePasswordRequest("oldPass", "newPass");
 
             // Act
             var result = await _authService.ChangePasswordAsync(claimsPrincipal, changePasswordDto, CancellationToken.None);
@@ -90,7 +90,7 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
             // Arrange
             var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "123") };
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-            var changePasswordDto = new ChangePasswordDto("oldPass", "newPass");
+            var changePasswordDto = new ChangePasswordRequest("oldPass", "newPass");
 
             A.CallTo(() => _userManager.FindByIdAsync("123"))!
                 .Returns(Task.FromResult<ApplicationUser>(null));
@@ -109,7 +109,7 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
             // Arrange
             var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "123") };
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-            var changePasswordDto = new ChangePasswordDto("oldPass", "newPass");
+            var changePasswordDto = new ChangePasswordRequest("oldPass", "newPass");
             var user = new ApplicationUser();
 
             A.CallTo(() => _userManager.FindByIdAsync("123"))!
@@ -131,7 +131,7 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
             // Arrange
             var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "123") };
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-            var changePasswordDto = new ChangePasswordDto("oldPass", "newPass");
+            var changePasswordDto = new ChangePasswordRequest("oldPass", "newPass");
             var user = new ApplicationUser();
             var roles = new List<string> { "User" };
 

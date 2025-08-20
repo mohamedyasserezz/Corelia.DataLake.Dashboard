@@ -21,6 +21,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
     public class AuthService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+        RoleManager<IdentityRole> roleManager,
         IUnitOfWork unitOfWork,
         IJwtProvider jwtProvider,
         IFileService fileService,
@@ -30,6 +31,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager=roleManager;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IJwtProvider _jwtProvider = jwtProvider;
         private readonly IFileService _fileService = fileService;
@@ -42,6 +44,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
         private readonly int _otpExpiryMinutes = 15;
         private readonly int _refreshTokenExpiryDays = 14;
 
+     
         public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
         {
             if (!Enum.TryParse<UserType>(request.UserType, true, out var userType))
@@ -65,15 +68,40 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
             };
 
             var result = await _userManager.CreateAsync(user, request.Password);
-
             if (!result.Succeeded)
                 return Result.Failure<AuthResponse>(
                     new Error("RegistrationFailed", "Failed to register user", 500)
                 );
 
-            var token = Guid.NewGuid().ToString();
-            var refreshToken = Guid.NewGuid().ToString();
-            var expiresIn = 3600;
+            var roleName = userType.ToString();
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!roleResult.Succeeded)
+            {
+                return Result.Failure<AuthResponse>(
+                    new Error("RoleAssignmentFailed", "Failed to assign role to user", 500)
+                );
+            }
+
+            await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(ClaimTypes.Role, roleName));
+
+            var refreshToken = GenerateRefreshToken();
+            var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+
+            user.RefreshTokens.Add(new RefreshToken
+            {
+                Token = refreshToken,
+                ExpiresOn = refreshTokenExpiration
+            });
+
+            await _userManager.UpdateAsync(user);
+
+            var jwtRoles = await _userManager.GetRolesAsync(user);
+            var (token, expiresIn) = _jwtProvider.GenerateToken(user, jwtRoles);
 
             var response = new AuthResponse(
                 user.Id,
@@ -84,11 +112,12 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
                 expiresIn,
                 refreshToken,
                 user.UserType.ToString(),
-                DateTime.UtcNow.AddDays(7)
+                refreshTokenExpiration
             );
 
             return Result.Success(response);
         }
+
 
 
 

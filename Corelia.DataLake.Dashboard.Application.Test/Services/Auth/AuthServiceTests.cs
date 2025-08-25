@@ -25,6 +25,7 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<AuthService> _logger;
         private readonly IEmailSender _emailSender = A.Fake<IEmailSender>();
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly IAuthService _authService;
 
@@ -44,6 +45,9 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
             _userManager = A.Fake<UserManager<ApplicationUser>>(options =>
                 options.WithArgumentsForConstructor(() =>
                     new UserManager<ApplicationUser>(A.Fake<IUserStore<ApplicationUser>>(), null!, null!, null!, null!, null!, null!, null!, null!)));
+            _roleManager = A.Fake<RoleManager<IdentityRole>>(options =>
+           options.WithArgumentsForConstructor(() =>
+               new RoleManager<IdentityRole>(A.Fake<IRoleStore<IdentityRole>>(), null!, null!, null!, null!)));
 
             _signInManager = A.Fake<SignInManager<ApplicationUser>>(options =>
                 options.WithArgumentsForConstructor(() =>
@@ -59,14 +63,15 @@ namespace Corelia.DataLake.Dashboard.Application.Test.Services.Auth
 
             // Create the service to be tested with real implementation and faked dependencies
             _authService = new AuthService(
-                _userManager,
-                _signInManager,
-                _unitOfWork,
-                _jwtProvider,
-                _fileService,
-                _httpContextAccessor,
-                _emailSender,
-                _logger);
+             _userManager,
+             _signInManager,
+             _roleManager,
+             _unitOfWork,
+             _jwtProvider,
+             _fileService,
+             _httpContextAccessor,
+             _emailSender,
+             _logger);
         }
 
         [Fact]

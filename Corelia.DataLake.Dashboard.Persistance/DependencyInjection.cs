@@ -1,6 +1,7 @@
 ﻿using Corelia.DataLake.Dashboard.Domain.Contract.Infrastructure;
 using Corelia.DataLake.Dashboard.Domain.Contract.Infrastructure.DbInitializers;
 using Corelia.DataLake.Dashboard.Persistance.Data;
+using Corelia.DataLake.Dashboard.Persistance.Data.Interceptors;
 using Corelia.DataLake.Dashboard.Persistance.DbInitilizers;
 using Corelia.DataLake.Dashboard.Persistance.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
@@ -9,22 +10,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Corelia.DataLake.Dashboard.Persistance
 {
-    public static class DependencyInjection
-    {
-        public static IServiceCollection AddPersistance(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            });
+	public static class DependencyInjection
+	{
+		public static IServiceCollection AddPersistance(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.AddDbContext<ApplicationDbContext>((provider, options) =>
+			{
+				options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+				.AddInterceptors(provider.GetRequiredService<AuditInterceptor>());
+			});
+
+			services.AddScoped<AuditInterceptor>();
+
+			services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+
+			services.AddScoped(typeof(ICoreliaDataLakeDbInitializer), typeof(CoreliaDataLakeDbInitializer));
 
 
-            services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-
-            services.AddScoped(typeof(ICoreliaDataLakeDbInitializer), typeof(CoreliaDataLakeDbInitializer));
-
-
-            return services;
-        }
-    }
+			return services;
+		}
+	}
 }

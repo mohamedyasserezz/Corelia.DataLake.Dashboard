@@ -66,7 +66,27 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Workspaces
 			return Result.Success("Workspace deleted successfully");
 		}
 
-		public async Task<Result<ReturnWorkspaceResponse>> UpdateWorkspace(int workspaceId, UpdateWorkspaceRequest workspaceRequest)
+        public async Task<Result<ReturnWorkspaceResponse>> GetWorkspace(int workspaceId)
+        {
+            var workspace = await _unitOfWork.GetRepository<Workspace, int>().GetByIdAsync(workspaceId);
+            if (workspace == null)
+            {
+                return Result.Failure<ReturnWorkspaceResponse>(new Error("WorkspaceNotFound", "Workspace not found", (int)ResponseStatusCode.NotFound));
+            }
+            var workspaceResponse = _mapper.Map<ReturnWorkspaceResponse>(workspace);
+            return Result.Success(workspaceResponse);
+        }
+
+        public async Task<Result<IEnumerable<ReturnWorkspaceResponse>>> ListWorkspaces()
+        {
+
+            var workspaces = await _unitOfWork.GetRepository<Workspace, int>().GetAllAsync();
+            var workspaceResponses = _mapper.Map<IEnumerable<ReturnWorkspaceResponse>>(workspaces);
+            return Result.Success(workspaceResponses);
+
+        }
+
+        public async Task<Result<ReturnWorkspaceResponse>> UpdateWorkspace(int workspaceId, UpdateWorkspaceRequest workspaceRequest)
 		{
 
 			var workspace = await _unitOfWork.GetRepository<Workspace, int>().GetByIdAsync(workspaceId);

@@ -22,7 +22,8 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
             {
                 new(JwtRegisteredClaimNames.Sub,user.Id),
                 new(JwtRegisteredClaimNames.Email,user.Email!),
-                new(JwtRegisteredClaimNames.Name,user.FullName),
+				new(ClaimTypes.PrimarySid, user.Id),
+				new(JwtRegisteredClaimNames.Name,user.FullName),
                 new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 new(nameof(roles),JsonSerializer.Serialize(roles),JsonClaimValueTypes.JsonArray)
             };

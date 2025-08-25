@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Responses
+namespace Corelia.DataLake.Dashboard.Shared.Models.Workspaces.Responses
 {
 	public record ReturnWorkspaceResponse(
 		string created_by,
@@ -14,5 +14,8 @@ namespace Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Res
 		string? description,
 		bool is_archived,
 		bool is_personal
-		);
+		)
+	{
+		public ReturnWorkspaceResponse() : this("", 0, "", null, null, false, false) { }
+	}
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Corelia.DataLake.Dashboard.Domain.Entities.Workspaces;
-using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Requests;
-using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Responses;
+using Corelia.DataLake.Dashboard.Shared.Models.Workspaces.Requests;
+using Corelia.DataLake.Dashboard.Shared.Models.Workspaces.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +19,7 @@ namespace Corelia.DataLake.Dashboard.Application.Mapping
 
 			CreateMap<CreateWorkspaceRequest, Workspace>();
 
-			CreateMap<UpdateWorkspaceRequest, Workspace>()
-				.ForMember(d => d.Id, opt => opt.MapFrom(src => src.id));
+			CreateMap<UpdateWorkspaceRequest, Workspace>();
 
 			CreateMap<Workspace, ReturnWorkspaceResponse>()
 				.ForMember(d => d.id, opt => opt.MapFrom(src => src.Id))

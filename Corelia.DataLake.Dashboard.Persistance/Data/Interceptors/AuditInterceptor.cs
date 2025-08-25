@@ -36,7 +36,7 @@ namespace Corelia.DataLake.Dashboard.Persistance.Data.Interceptors
 			if (dbContext is null)
 				return;
 
-			var Entries = dbContext.ChangeTracker.Entries<BaseAuditableEntity<int>>()
+			var Entries = dbContext.ChangeTracker.Entries<IBaseAuditableEntity>()
 				.Where(entity => entity.State is EntityState.Added or EntityState.Modified);
 			foreach (var entry in Entries)
 			{

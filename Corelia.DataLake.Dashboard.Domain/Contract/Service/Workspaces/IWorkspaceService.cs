@@ -1,6 +1,6 @@
 ﻿using Corelia.DataLake.Dashboard.Shared.Abstraction;
-using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Requests;
-using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Responses;
+using Corelia.DataLake.Dashboard.Shared.Models.Workspaces.Requests;
+using Corelia.DataLake.Dashboard.Shared.Models.Workspaces.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Corelia.DataLake.Dashboard.Domain.Contract.Service.Workspaces
 		// Task<List<ReturnWorkspaceRequest>> ListWorkspaces();
 		// Task<ReturnWorkspaceRequest> GetWorkspace(int workspaceId);	
 		Task<Result<ReturnWorkspaceResponse>> CreateWorkspace(CreateWorkspaceRequest workspaceRequest);
-		Task<Result<ReturnWorkspaceResponse>> UpdateWorkspace(UpdateWorkspaceRequest workspaceRequest);
+		Task<Result<ReturnWorkspaceResponse>> UpdateWorkspace(int workspaceId, UpdateWorkspaceRequest workspaceRequest);
 		Task<Result<string>> DeleteWorkspace(int workspaceId);
 
 		// Task AddMembers(string userId, int workspaceId);

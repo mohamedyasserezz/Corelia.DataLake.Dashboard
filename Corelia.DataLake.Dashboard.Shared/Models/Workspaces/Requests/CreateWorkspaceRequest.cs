@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Corelia.DataLake.Dashboard.Shared.Models.Authentication.Workspaces.Requests
+namespace Corelia.DataLake.Dashboard.Shared.Models.Workspaces.Requests
 {
 	public record CreateWorkspaceRequest(
 		string title,

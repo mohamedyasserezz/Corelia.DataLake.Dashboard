@@ -1,4 +1,5 @@
 ﻿using Corelia.DataLake.Dashboard.Domain.Contract;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Corelia.DataLake.Dashboard.Apis.Services
@@ -13,7 +14,9 @@ namespace Corelia.DataLake.Dashboard.Apis.Services
 			_httpcontextAccessor = contextAccessor;
 
 
-			UserId = _httpcontextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.PrimarySid);
+			UserId = _httpcontextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
+				  ?? _httpcontextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.PrimarySid)
+				  ?? _httpcontextAccessor?.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 		}
 	}
 }

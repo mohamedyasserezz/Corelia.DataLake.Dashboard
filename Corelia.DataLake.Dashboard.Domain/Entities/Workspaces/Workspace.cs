@@ -1,5 +1,7 @@
-﻿using Corelia.DataLake.Dashboard.Domain.Entities.Common;
+﻿using Corelia.DataLake.Dashboard.Domain.Entities.Authentication;
+using Corelia.DataLake.Dashboard.Domain.Entities.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +16,7 @@ namespace Corelia.DataLake.Dashboard.Domain.Entities.Workspaces
 		public string? description { get; set; }
 		public bool is_archived { get; set; } = false;
 		public bool is_personal { get; set; } = false;
+
+		public virtual ICollection<ApplicationUser> Members { get; set; } = new HashSet<ApplicationUser>();
 	}
 }

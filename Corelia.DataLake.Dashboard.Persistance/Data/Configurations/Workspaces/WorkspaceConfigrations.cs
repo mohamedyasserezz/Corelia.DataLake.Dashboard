@@ -42,6 +42,10 @@ namespace Corelia.DataLake.Dashboard.Persistance.Data.Configurations.Workspaces
 				.IsRequired()
 				.HasDefaultValue(false);
 
+			builder
+				.HasMany(b => b.Members)
+				.WithMany();
+
 		}
 	}
 }

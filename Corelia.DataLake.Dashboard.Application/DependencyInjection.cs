@@ -3,6 +3,7 @@ using Corelia.DataLake.Dashboard.Application.Services.Authentication;
 using Corelia.DataLake.Dashboard.Application.Services.Email;
 using Corelia.DataLake.Dashboard.Application.Services.Files;
 using Corelia.DataLake.Dashboard.Application.Services.Workspaces;
+using Corelia.DataLake.Dashboard.Domain.Contract;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.File;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Workspaces;
@@ -23,11 +24,18 @@ namespace Corelia.DataLake.Dashboard.Application
 		public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
 		{
 
+			services.AddScoped<IServiceManager, ServiceManager>();
 			services.AddScoped<IJwtProvider, JwtProvider>();
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IFileService, FileService>();
 			services.AddScoped<IEmailSender, EmailService>();
 			services.AddScoped<IWorkspaceService, WorkspaceService>();
+
+			services.AddScoped(typeof(Func<IWorkspaceService>), (serviceprovider) =>
+			{
+				return () => serviceprovider.GetRequiredService<IWorkspaceService>();
+
+			});
 
 
 			#region Hangfire

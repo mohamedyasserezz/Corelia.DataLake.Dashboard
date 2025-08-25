@@ -8,7 +8,7 @@ using Corelia.DataLake.Dashboard.Shared.Models.Authentication.Register;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Corelia.DataLake.Dashboard.Apis.Controllers
+namespace Corelia.DataLake.Dashboard.Apis.Controllers.Account
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -5,6 +5,8 @@ namespace Corelia.DataLake.Dashboard.Shared._Common.Errors
 {
     public static class TasksErrors
     {
+        public static readonly Error TaskNotFound =
+            new("Task.NotFound", "Task not found", StatusCodes.Status404NotFound);
         public static readonly Error TasksNotFound =
             new("Tasks.NotFound", "No tasks found", StatusCodes.Status404NotFound);
     }

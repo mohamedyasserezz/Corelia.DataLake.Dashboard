@@ -2,10 +2,12 @@
 using Corelia.DataLake.Dashboard.Application.Services.Authentication;
 using Corelia.DataLake.Dashboard.Application.Services.Email;
 using Corelia.DataLake.Dashboard.Application.Services.Files;
+using Corelia.DataLake.Dashboard.Application.Services.Task;
 using Corelia.DataLake.Dashboard.Application.Services.Workspaces;
 using Corelia.DataLake.Dashboard.Domain.Contract;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.File;
+using Corelia.DataLake.Dashboard.Domain.Contract.Service.Task;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Workspaces;
 using Hangfire;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,21 +58,26 @@ namespace Corelia.DataLake.Dashboard.Application
 
 			services.AddAutoMapper(typeof(MappingProfile));
 
-			//var mapper = services.BuildServiceProvider().GetRequiredService<IMapper>();
-			//mapper.ConfigurationProvider.AssertConfigurationIsValid();
+            //var mapper = services.BuildServiceProvider().GetRequiredService<IMapper>();
+            //mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
-			//services.AddAutoMapper(config =>
-			//{
-			//    config.AddProfile<MappingProfile>();
-			//}, typeof(MappingProfile).Assembly, typeof(CommentProfileResolver).Assembly);
+            //services.AddAutoMapper(config =>
+            //{
+            //    config.AddProfile<MappingProfile>();
+            //}, typeof(MappingProfile).Assembly, typeof(CommentProfileResolver).Assembly);
 
-			//// Validate AutoMapper configuration 
+            //// Validate AutoMapper configuration 
 
-			#endregion
+            #endregion
 
 
-
-			return services;
+            services.AddHttpClient<ITaskServices, TaskServices>(client =>
+            {
+                client.BaseAddress = new Uri("https://app.humansignal.com");
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Token", "<YOUR_ACCESS_TOKEN>");
+            });
+            return services;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using Corelia.DataLake.Dashboard.Application.Services.Authentication;
 using Corelia.DataLake.Dashboard.Application.Services.Email;
 using Corelia.DataLake.Dashboard.Application.Services.Files;
-using Corelia.DataLake.Dashboard.Application.Services.Task;
+using Corelia.DataLake.Dashboard.Application.Services.Tasks;
 using Corelia.DataLake.Dashboard.Application.Services.Workspaces;
 using Corelia.DataLake.Dashboard.Domain.Contract;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication;

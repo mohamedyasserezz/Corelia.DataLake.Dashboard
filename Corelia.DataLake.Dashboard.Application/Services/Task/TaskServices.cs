@@ -6,7 +6,7 @@ using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Corelia.DataLake.Dashboard.Shared.Models.Task;
 using System.Net.Http.Json;
 
-namespace Corelia.DataLake.Dashboard.Application.Services.Task
+namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 {
     public class TaskServices(HttpClient httpClient,
         IFileService fileService) : ITaskServices

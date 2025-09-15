@@ -6,7 +6,7 @@ using Corelia.DataLake.Dashboard.Shared.Abstraction;
 using Corelia.DataLake.Dashboard.Shared.Models.Task;
 using System.Net.Http.Json;
 
-namespace Corelia.DataLake.Dashboard.Application.Services.Task
+namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 {
     public class TaskServices(HttpClient httpClient,
         IFileService fileService) : ITaskServices
@@ -19,14 +19,54 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Task
             throw new NotImplementedException();
         }
 
-        public Task<Result<TaskResponse>> CancelTaskAsync(TaskRequest request)
+        public async Task<Result<TaskResponse>> CancelTaskAsync(TaskRequest request)
         {
-            throw new NotImplementedException();
+            var response=  GetTaskByIdAsync(request);
+
+            if ( response.Result.IsFailure)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
+
+            var task =  response.Result.Value;
+
+            var canceledTask =  new TaskResponse(
+                        task.Id,
+                        task.IsAssigned,
+                        task.IsCompleted,
+                        task.IsReviewed,
+                        task.CreatedOn,
+                        task.CompletedOn,
+                        IsCanceled: true,
+                        task.FileUrl,
+                        task.ProjectId
+                        );
+
+            return  Result.Success(canceledTask);
+           
         }
 
-        public Task<Result<TaskResponse>> CompleteTaskAsync(TaskRequest request)
+        public async Task<Result<TaskResponse>> CompleteTaskAsync(TaskRequest request)
         {
-            throw new NotImplementedException();
+            var response = GetTaskByIdAsync(request);
+
+            if (response.Result.IsFailure)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
+
+            var task = response.Result.Value;
+
+            var canceledTask = new TaskResponse(
+                        task.Id,
+                        task.IsAssigned,
+                        IsCompleted:true,
+                        task.IsReviewed,
+                        task.CreatedOn,
+                        task.CompletedOn,
+                        task.IsCanceled,
+                        task.FileUrl,
+                        task.ProjectId
+                        );
+
+            return Result.Success(canceledTask);
+
         }
 
         public Task<Result> DeleteTaskAsync(TaskRequest request)
@@ -37,7 +77,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Task
         public async Task<Result<IEnumerable<TaskResponse>>> GetAllTasksAsync()
         {
             var response = await _httpClient.GetAsync("api/tasks");
-           
+
             if (response.IsSuccessStatusCode)
             {
                 var tasksAnnontation = await response.Content.ReadFromJsonAsync<IEnumerable<TaskAnnotation>>();

@@ -21,51 +21,80 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         public async Task<Result<TaskResponse>> CancelTaskAsync(TaskRequest request)
         {
-            var response=  GetTaskByIdAsync(request);
+            var response = await _httpClient.GetAsync($"api/tasks{request.Id}");
 
-            if ( response.Result.IsFailure)
+            var taskAnnontation = await response.Content.ReadFromJsonAsync<TaskAnnotation>();
+
+            if (taskAnnontation is null)
                 return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
 
-            var task =  response.Result.Value;
+            taskAnnontation.ReviewsRejected+= 1;
 
-            var canceledTask =  new TaskResponse(
-                        task.Id,
-                        task.IsAssigned,
-                        task.IsCompleted,
-                        task.IsReviewed,
-                        task.CreatedOn,
-                        task.CompletedOn,
+            var task = new TaskResponse(
+                        taskAnnontation.Id,
+                        taskAnnontation.AnnotatorsCount > 0 ? true : false,
+                        taskAnnontation.IsLabeled,
+                        taskAnnontation.Reviewed,
+                        taskAnnontation.CreatedAt,
+                        taskAnnontation.UpdatedAt,
                         IsCanceled: true,
-                        task.FileUrl,
-                        task.ProjectId
+                        _fileService.GetImageUrl("task", taskAnnontation.FileUpload),
+                        taskAnnontation.Project
                         );
 
-            return  Result.Success(canceledTask);
-           
+            if (task is null)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
+
+            return Result.Success(task);
         }
 
         public async Task<Result<TaskResponse>> CompleteTaskAsync(TaskRequest request)
         {
-            var response = GetTaskByIdAsync(request);
+            var response = await _httpClient.GetAsync($"api/tasks{request.Id}");
 
-            if (response.Result.IsFailure)
+            var taskAnnontation = await response.Content.ReadFromJsonAsync<TaskAnnotation>();
+
+            if (taskAnnontation is null)
                 return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
 
-            var task = response.Result.Value;
+            taskAnnontation.IsLabeled = true;
 
-            var canceledTask = new TaskResponse(
-                        task.Id,
-                        task.IsAssigned,
-                        IsCompleted:true,
-                        task.IsReviewed,
-                        task.CreatedOn,
-                        task.CompletedOn,
-                        task.IsCanceled,
-                        task.FileUrl,
-                        task.ProjectId
+            var task = new TaskResponse(
+                        taskAnnontation.Id,
+                        taskAnnontation.AnnotatorsCount > 0 ? true : false,
+                        taskAnnontation.IsLabeled,
+                        taskAnnontation.Reviewed,
+                        taskAnnontation.CreatedAt,
+                        taskAnnontation.UpdatedAt,
+                        taskAnnontation.ReviewsRejected > 0 ? true : false,
+                        _fileService.GetImageUrl("task", taskAnnontation.FileUpload),
+                        taskAnnontation.Project
                         );
 
-            return Result.Success(canceledTask);
+            if (task is null)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
+
+            return Result.Success(task);
+            //var response = GetTaskByIdAsync(request);
+
+            //if (response.Result.IsFailure)
+            //    return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
+
+            //var task = response.Result.Value;
+
+            //var canceledTask = new TaskResponse(
+            //            task.Id,
+            //            task.IsAssigned,
+            //            IsCompleted:true,
+            //            task.IsReviewed,
+            //            task.CreatedOn,
+            //            task.CompletedOn,
+            //            task.IsCanceled,
+            //            task.FileUrl,
+            //            task.ProjectId
+            //            );
+
+            //return Result.Success(canceledTask);
 
         }
 
@@ -151,6 +180,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         public Task<Result<TaskResponse>> UpdateTaskAsync(TaskRequest request)
         {
+            
             throw new NotImplementedException();
         }
     }

@@ -14,6 +14,12 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
         private readonly HttpClient _httpClient = httpClient;
         private readonly IFileService _fileService = fileService;
 
+        private sealed class TasksPage
+        {
+            public IEnumerable<TaskAnnotation>? tasks { get; set; }
+            public int? total { get; set; }
+        }
+
         public Task<Result<TaskResponse>> AssignTaskAsync()
         {
             throw new NotImplementedException();
@@ -21,7 +27,10 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         public async Task<Result<TaskResponse>> CancelTaskAsync(TaskRequest request)
         {
-            var response = await _httpClient.GetAsync($"api/tasks{request.Id}");
+            var response = await _httpClient.GetAsync($"/api/tasks/{request.Id}/");
+
+            if (!response.IsSuccessStatusCode)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
 
             var taskAnnontation = await response.Content.ReadFromJsonAsync<TaskAnnotation>();
 
@@ -50,7 +59,10 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         public async Task<Result<TaskResponse>> CompleteTaskAsync(TaskRequest request)
         {
-            var response = await _httpClient.GetAsync($"api/tasks{request.Id}");
+            var response = await _httpClient.GetAsync($"/api/tasks/{request.Id}/");
+
+            if (!response.IsSuccessStatusCode)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
 
             var taskAnnontation = await response.Content.ReadFromJsonAsync<TaskAnnotation>();
 
@@ -75,26 +87,6 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
                 return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
 
             return Result.Success(task);
-            //var response = GetTaskByIdAsync(request);
-
-            //if (response.Result.IsFailure)
-            //    return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
-
-            //var task = response.Result.Value;
-
-            //var canceledTask = new TaskResponse(
-            //            task.Id,
-            //            task.IsAssigned,
-            //            IsCompleted:true,
-            //            task.IsReviewed,
-            //            task.CreatedOn,
-            //            task.CompletedOn,
-            //            task.IsCanceled,
-            //            task.FileUrl,
-            //            task.ProjectId
-            //            );
-
-            //return Result.Success(canceledTask);
 
         }
 
@@ -105,11 +97,12 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         public async Task<Result<IEnumerable<TaskResponse>>> GetAllTasksAsync()
         {
-            var response = await _httpClient.GetAsync("api/tasks");
+            var response = await _httpClient.GetAsync("/api/tasks/");
 
             if (response.IsSuccessStatusCode)
             {
-                var tasksAnnontation = await response.Content.ReadFromJsonAsync<IEnumerable<TaskAnnotation>>();
+                var page = await response.Content.ReadFromJsonAsync<TasksPage>();
+                var tasksAnnontation = page?.tasks;
 
                 var emptyTaskList = new List<TaskResponse>();
                 if (tasksAnnontation is null || !tasksAnnontation.Any())
@@ -141,8 +134,10 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         public async Task<Result<TaskResponse>> GetTaskByIdAsync(TaskRequest request)
         {
-            var response = await _httpClient.GetAsync($"api/tasks/{request.Id}");
+            var response = await _httpClient.GetAsync($"/api/tasks/{request.Id}/");
 
+            if (!response.IsSuccessStatusCode)
+                return Result.Failure<TaskResponse>(TasksErrors.TaskNotFound);
 
             var taskAnnontation = await response.Content.ReadFromJsonAsync<TaskAnnotation>();
 
@@ -168,9 +163,48 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 
         }
 
-        public Task<Result<IEnumerable<TaskResponse>>> GetTasksByProjectAsync(TaskRequest request)
+        public async Task<Result<IEnumerable<TaskResponse>>> GetTasksByProjectAsync(TaskRequest request)
         {
-            throw new NotImplementedException();
+            // Prefer global listing with project filter per docs
+            var response = await _httpClient.GetAsync($"/api/tasks/?project={request.Id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Fallback to project-scoped listing (may vary by version)
+                response = await _httpClient.GetAsync($"/api/projects/{request.Id}/tasks/");
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var page = await response.Content.ReadFromJsonAsync<TasksPage>();
+                var tasksAnnontation = page?.tasks;
+
+                var emptyTaskList = new List<TaskResponse>();
+                if (tasksAnnontation is null || !tasksAnnontation.Any())
+                    return Result.Success(emptyTaskList.AsEnumerable());
+
+                var tasks = tasksAnnontation.Select(t =>
+                    new TaskResponse(
+                        t.Id,
+                        t.AnnotatorsCount > 0 ? true : false,
+                        t.IsLabeled,
+                        t.Reviewed,
+                        t.CreatedAt,
+                        t.UpdatedAt,
+                        t.ReviewsRejected > 0 ? true : false,
+                        _fileService.GetImageUrl("task", t.FileUpload),
+                        t.Project
+                        ));
+
+                if (tasks is null)
+                    return Result.Failure<IEnumerable<TaskResponse>>(TasksErrors.TasksNotFound);
+
+                return Result.Success(tasks);
+            }
+            else
+            {
+                return Result.Failure<IEnumerable<TaskResponse>>(TasksErrors.TasksNotFound);
+            }
         }
 
         public Task<Result<TaskResponse>> ReviewTaskAsync(TaskRequest request)

@@ -28,11 +28,13 @@ namespace Corelia.DataLake.Dashboard.Application
 		{
 
 			services.AddScoped<IServiceManager, ServiceManager>();
-			services.AddScoped<IJwtProvider, JwtProvider>();
+			// Removed duplicate IJwtProvider registration to avoid lifetime conflicts. It is already registered in APIs layer.
+			// services.AddScoped<IJwtProvider, JwtProvider>();
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IFileService, FileService>();
 			services.AddScoped<IEmailSender, EmailService>();
 			services.AddScoped<IWorkspaceService, WorkspaceService>();
+
 
 			services.AddScoped(typeof(Func<IWorkspaceService>), (serviceprovider) =>
 			{
@@ -58,26 +60,34 @@ namespace Corelia.DataLake.Dashboard.Application
 
 			services.AddAutoMapper(typeof(MappingProfile));
 
-            //var mapper = services.BuildServiceProvider().GetRequiredService<IMapper>();
-            //mapper.ConfigurationProvider.AssertConfigurationIsValid();
+			//var mapper = services.BuildServiceProvider().GetRequiredService<IMapper>();
+			//mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
-            //services.AddAutoMapper(config =>
-            //{
-            //    config.AddProfile<MappingProfile>();
-            //}, typeof(MappingProfile).Assembly, typeof(CommentProfileResolver).Assembly);
+			//services.AddAutoMapper(config =>
+			//{
+			//    config.AddProfile<MappingProfile>();
+			//}, typeof(MappingProfile).Assembly, typeof(CommentProfileResolver).Assembly);
 
-            //// Validate AutoMapper configuration 
+			//// Validate AutoMapper configuration 
 
-            #endregion
+			#endregion
 
 
-            services.AddHttpClient<ITaskServices, TaskServices>(client =>
-            {
-                client.BaseAddress = new Uri("https://app.humansignal.com");
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Token", "<YOUR_ACCESS_TOKEN>");
-            });
-            return services;
+			services.AddHttpClient<ITaskServices, TaskServices>(client =>
+			{
+				var baseUrl = configuration["LabelStudio:BaseUrl"];
+				var apiToken = configuration["LabelStudio:ApiToken"];
+				if (string.IsNullOrWhiteSpace(baseUrl))
+					throw new InvalidOperationException("LabelStudio:BaseUrl is not configured.");
+				if (string.IsNullOrWhiteSpace(apiToken))
+					throw new InvalidOperationException("LabelStudio:ApiToken is not configured.");
+				if (!baseUrl.EndsWith("/"))
+					baseUrl += "/";
+				client.BaseAddress = new Uri(baseUrl);
+				client.DefaultRequestHeaders.Authorization =
+					new AuthenticationHeaderValue("Token", apiToken);
+			});
+			return services;
 		}
 	}
 }

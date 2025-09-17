@@ -20,7 +20,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Projects
 		{
 			_httpClient = httpClient;
 			_httpClient.BaseAddress = new Uri("http://localhost:8080/api/");
-			_httpClient.DefaultRequestHeaders.Add("Authorization", "Token 1e98e8df7131adfe6d3fd62278bc9163967a97ea");
+			_httpClient.DefaultRequestHeaders.Add("Authorization", "Token c6bf6066cccb57eb926f1ef09dc1ce6f134f0d28");
 		}
 		public async Task<Result<PagedResult<ProjectResponse>>> ListProjectsAsync()
 		{
@@ -87,5 +87,15 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Projects
 
 			return Result.Success(obj);
 		}
-	}
+
+        public Task<Result<ProjectResponse>> UpdateProjectAsync(string id, CreateProjectRequest req)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<bool>> DeleteProjectAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

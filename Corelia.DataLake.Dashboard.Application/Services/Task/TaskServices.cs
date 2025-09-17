@@ -8,11 +8,18 @@ using System.Net.Http.Json;
 
 namespace Corelia.DataLake.Dashboard.Application.Services.Tasks
 {
-    public class TaskServices(HttpClient httpClient,
-        IFileService fileService) : ITaskServices
+    public class TaskServices : ITaskServices
     {
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly IFileService _fileService = fileService;
+        private readonly HttpClient _httpClient;
+        private readonly IFileService _fileService;
+
+        public TaskServices(HttpClient httpClient,IFileService fileService)
+        {
+            _httpClient = httpClient;
+            _fileService = fileService;
+            _httpClient.BaseAddress = new Uri("http://localhost:8080/api/");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Token c6bf6066cccb57eb926f1ef09dc1ce6f134f0d28");
+        }
 
         private sealed class TasksPage
         {

@@ -84,17 +84,17 @@ namespace Corelia.DataLake.Dashboard.Application
 
 			services.AddHttpClient<ITaskServices, TaskServices>(client =>
 			{
-				var baseUrl = configuration["LabelStudio:BaseUrl"];
-				var apiToken = configuration["LabelStudio:ApiToken"];
-				if (string.IsNullOrWhiteSpace(baseUrl))
-					throw new InvalidOperationException("LabelStudio:BaseUrl is not configured.");
-				if (string.IsNullOrWhiteSpace(apiToken))
-					throw new InvalidOperationException("LabelStudio:ApiToken is not configured.");
-				if (!baseUrl.EndsWith("/"))
-					baseUrl += "/";
-				client.BaseAddress = new Uri(baseUrl);
-				client.DefaultRequestHeaders.Authorization =
-					new AuthenticationHeaderValue("Token", apiToken);
+				//var baseUrl = configuration["LabelStudio:BaseUrl"];
+				//var apiToken = configuration["LabelStudio:ApiToken"];
+				//if (string.IsNullOrWhiteSpace(baseUrl))
+				//	throw new InvalidOperationException("LabelStudio:BaseUrl is not configured.");
+				//if (string.IsNullOrWhiteSpace(apiToken))
+				//	throw new InvalidOperationException("LabelStudio:ApiToken is not configured.");
+				//if (!baseUrl.EndsWith("/"))
+				//	baseUrl += "/";
+				//client.BaseAddress = new Uri(baseUrl);
+				//client.DefaultRequestHeaders.Authorization =
+				//	new AuthenticationHeaderValue("Token", apiToken);
 			});
 			return services;
 		}

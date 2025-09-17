@@ -79,7 +79,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Workspaces
 
 				return Result.Success(workspace);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				return Result.Failure<ReturnWorkspaceResponse>(new Error(ResponseStatusCode.NotFound.ToString(), "Workspaces not found", (int)ResponseStatusCode.NotFound));
 			}

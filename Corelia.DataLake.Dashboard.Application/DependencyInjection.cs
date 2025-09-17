@@ -2,11 +2,13 @@
 using Corelia.DataLake.Dashboard.Application.Services.Authentication;
 using Corelia.DataLake.Dashboard.Application.Services.Email;
 using Corelia.DataLake.Dashboard.Application.Services.Files;
+using Corelia.DataLake.Dashboard.Application.Services.Projects;
 using Corelia.DataLake.Dashboard.Application.Services.Tasks;
 using Corelia.DataLake.Dashboard.Application.Services.Workspaces;
 using Corelia.DataLake.Dashboard.Domain.Contract;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Authentication;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.File;
+using Corelia.DataLake.Dashboard.Domain.Contract.Service.Projects;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Task;
 using Corelia.DataLake.Dashboard.Domain.Contract.Service.Workspaces;
 using Hangfire;
@@ -39,6 +41,13 @@ namespace Corelia.DataLake.Dashboard.Application
 			services.AddScoped(typeof(Func<IWorkspaceService>), (serviceprovider) =>
 			{
 				return () => serviceprovider.GetRequiredService<IWorkspaceService>();
+
+			});
+			services.AddScoped<IProjectService, ProjectService>();
+
+			services.AddScoped(typeof(Func<IProjectService>), (serviceprovider) =>
+			{
+				return () => serviceprovider.GetRequiredService<IProjectService>();
 
 			});
 

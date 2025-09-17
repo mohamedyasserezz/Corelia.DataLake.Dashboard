@@ -18,7 +18,6 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers.Tasks
         private readonly ILogger<TasksController> _logger = logger;
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Fetching all tasks from Label Studio");
@@ -31,7 +30,6 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers.Tasks
         }
 
         [HttpGet("{id:int}")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Fetching task with id: {id}", id);

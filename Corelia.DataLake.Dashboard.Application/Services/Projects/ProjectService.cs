@@ -88,14 +88,36 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Projects
 			return Result.Success(obj);
 		}
 
-        public Task<Result<ProjectResponse>> UpdateProjectAsync(string id, CreateProjectRequest req)
-        {
-            throw new NotImplementedException();
-        }
+		public async Task<Result<ProjectResponse>> UpdateProjectAsync(string id, CreateProjectRequest req)
+		{
 
-        public Task<Result<bool>> DeleteProjectAsync(string id)
-        {
-            throw new NotImplementedException();
-        }
-    }
+			var content = new StringContent(JsonSerializer.Serialize(req), Encoding.UTF8, "application/json");
+
+			var response = await _httpClient.PutAsync($"projects/{id}/", content);
+
+			if (!response.IsSuccessStatusCode)
+				return Result.Failure<ProjectResponse>(new Error(response.StatusCode.ToString(), $"Status: {response.StatusCode}", (int)response.StatusCode));
+
+			var responseBody = await response.Content.ReadAsStringAsync();
+
+			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+			var resp = JsonSerializer.Deserialize<ProjectResponse>(responseBody, options);
+
+			if (resp == null)
+				return Result.Failure<ProjectResponse>(new Error("NullResponse", "Response was null", (int)ResponseStatusCode.BadRequest));
+
+			return Result.Success(resp);
+		}
+
+		public async Task<Result<bool>> DeleteProjectAsync(string id)
+		{
+			var response = await _httpClient.DeleteAsync($"projects/{id}/");
+
+			if (!response.IsSuccessStatusCode)
+				return Result.Failure<bool>(new Error(response.StatusCode.ToString(), $"Status: {response.StatusCode}", (int)response.StatusCode));
+
+			return Result.Success(true);
+		}
+	}
 }

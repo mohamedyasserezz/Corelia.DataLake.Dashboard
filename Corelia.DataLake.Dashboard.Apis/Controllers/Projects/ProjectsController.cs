@@ -39,5 +39,22 @@ namespace Corelia.DataLake.Dashboard.Apis.Controllers.Projects
 				? Ok(response.Value)
 				: response.ToProblem();
 		}
+
+		[HttpDelete("{id}")]
+		public async Task<ActionResult<Result<string>>> DeleteProject([FromRoute] string id)
+		{
+			var response = await _serviceManager.ProjectService.DeleteProjectAsync(id);
+			return response.IsSuccess
+				? Ok(response.Value)
+				: response.ToProblem();
+		}
+		[HttpPut("{id}")]
+		public async Task<ActionResult<Result<ProjectResponse>>> UpdateProject([FromRoute] string id, [FromBody] CreateProjectRequest projectRequest)
+		{
+			var response = await _serviceManager.ProjectService.UpdateProjectAsync(id, projectRequest);
+			return response.IsSuccess
+				? Ok(response.Value)
+				: response.ToProblem();
+		}
 	}
 }

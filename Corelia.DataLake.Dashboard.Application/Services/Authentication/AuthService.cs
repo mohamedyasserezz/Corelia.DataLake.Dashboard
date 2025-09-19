@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -28,7 +29,8 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
         IFileService fileService,
         IHttpContextAccessor httpContextAccessor,
         IEmailSender emailSender,
-        ILogger<AuthService> logger) : IAuthService
+        ILogger<AuthService> logger,
+        IConfiguration configuration) : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
@@ -108,7 +110,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
                 user.Id,
                 user.Email,
                 user.FullName,
-                user.Image,
+                user.Image != null ? $"{configuration["Urls:ApiBaseUrl"]}/images/profiles/{user.Image}" : null, // set base url for image
                 token,
                 expiresIn,
                 refreshToken,
@@ -148,7 +150,7 @@ namespace Corelia.DataLake.Dashboard.Application.Services.Authentication
                 var response = new AuthResponse(user.Id,
                     user.Email,
                     user.FullName,
-                    _fileService.GetProfileUrl(user),
+                    user.Image != null ? $"{configuration["Urls:ApiBaseUrl"]}/images/profiles/{user.Image}" : null, // set base url for image
                     token,
                     expiresIn,
                     refreshToken,
